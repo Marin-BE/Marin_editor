@@ -93,7 +93,6 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.colors_combo_box.clear()
         self.colors_combo_box.addItems(color_list)
 
-
     def change_detail_combo_box(self):
         self.is_detail = self.composition_combo_box.currentText()
 
@@ -210,11 +209,18 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         except Exception as e:
             print(e)
             
+    def check_json_and_remove(self):
+        json_file = os.path.splitext(self.file_path)[0] + '.json'
+
+        if os.path.isfile(json_file):
+            os.remove(json_file)
 
     def Critical_event(self, massage) :
         QMessageBox.critical(self,'Error', massage)
 
     def change_file_name_button_clicked(self):
+        self.check_json_and_remove()
+
         try:
             self.checking_result()
             self.image_path_list.remove(self.file_path)
