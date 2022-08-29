@@ -28,20 +28,17 @@ ext_list = ['.jpg', '.jpeg', '.png']
 # top, bottom, padding
 class_dict = {
     't' : {
-        'composition' : {'O' : ['상반신', '전신', '하반신', '디테일'], 
-                         'X' : ['앞면', '뒷면', '디테일']},
+        'model_composition' : ['상반신', '전신', '하반신', '디테일'], 
         'detail'      : {'O' : ['넥라인', '중간허리부분', '소매', '포캣', '아래밑단', '후드뒷면'], 
                          'X' : ['넥라인', '안감', '재질트위스트', '지퍼', '소매', '밑단']}
     },
     'p' : {
-        'composition' : {'O' : ['상반신', '전신', '디테일'], 
-                         'X' : ['앞면', '뒷면', '디테일']},
+        'model_composition' : ['상반신', '전신', '디테일'],
         'detail'      : {'O' : ['집업', '집업오픈', '소매', '내부포켓', '외부포켓', '포켓손'], 
                          'X' : ['넥라인', '소매', '포켓', '밑단', '안감']}
     },
     'b' : {
-        'composition' : {'O' : ['전신', '하반신', '디테일'], 
-                         'X' : ['앞면', '뒷면', '디테일']},
+        'model_composition' : ['전신', '하반신', '디테일'],
         'detail'      : {'O' : ['허리가운데확대', '주머니손', '프린트', '뒷면포켓', '바지밑단'], 
                          'X' : ['허리가운데확대', '허리옆부분', '프린트', '바지밑단', '뒷면포켓', '허리안쪽밴딩', '안감']}        
     }
@@ -107,17 +104,18 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         elif self.p_radio_button.isChecked(): self.cloth_type = 'p'
         elif self.t_radio_button.isChecked(): self.cloth_type = 't'
         
-        if self.check_box_no_model.isChecked(): self.is_model = 'X'
-        else:                                   self.is_model = 'O'
+        composition_list = class_dict[self.cloth_type]['model_composition']
+
+        if self.check_box_no_model.isChecked(): 
+            self.is_model = 'X'
+            composition_list = ['디테일', '디테일 없음']
+        else:                                   
+            self.is_model = 'O'
         
         self.is_detail = self.composition_combo_box.currentText()
 
-        if self.is_detail == '디테일':
-            composition_list = class_dict[self.cloth_type]['composition'][self.is_model]
-            detail_list = class_dict[self.cloth_type]['detail'][self.is_model]
-        else:
-            composition_list = class_dict[self.cloth_type]['composition'][self.is_model]
-            detail_list = ['-']
+        if self.is_detail == '디테일':  detail_list = class_dict[self.cloth_type]['detail'][self.is_model]
+        else:                         detail_list = ['-']
 
         self.composition_combo_box.clear()
         self.detail_combo_box.clear()
@@ -152,9 +150,17 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         elif self.bg_type_8.isChecked(): self.bg_type = '8'
         else:                            self.bg_type = '-'
 
-        self.composition = self.composition_combo_box.currentText()
-        self.detail      = self.detail_combo_box.currentText()
-        color            = self.colors_combo_box.currentText()
+        if self.front_radio_button.isChecked():  self.image_composition = 'front'
+        elif self.side_radio_button.isChecked(): self.image_composition = 'side'
+        elif self.back_radio_button.isChecked(): self.image_composition = 'back'
+        else:                                    self.image_composition = '-'
+
+        self.model_composition = self.composition_combo_box.currentText()
+        if self.model_composition != '디테일':   
+            self.model_composition = '-'
+            
+        self.detail            = self.detail_combo_box.currentText()
+        color                  = self.colors_combo_box.currentText()
         
         try:    self.color_code = spao_colors['reverse'][color]
         except: self.color_code = color
@@ -252,18 +258,18 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         result_dict['file_name'] = c_file_name
         
         result_dict['result'] = {}
-        result_dict['result']['cloth_type']  = self.cloth_type
-        result_dict['result']['model']       = self.model_list
-        result_dict['result']['bg_type']     = self.bg_type
-        result_dict['result']['composition'] = self.composition
-        result_dict['result']['detail']      = self.detail
-        result_dict['result']['color']       = self.color_code
+        result_dict['result']['cloth_type']        = self.cloth_type
+        result_dict['result']['model']             = self.model_list
+        result_dict['result']['bg_type']           = self.bg_type
+        result_dict['result']['image_composition'] = self.image_composition
+        result_dict['result']['model_composition'] = self.model_composition
+        result_dict['result']['detail']            = self.detail
+        result_dict['result']['color']             = self.color_code
         
         result_file_name = os.path.splitext(c_file_name)[0] + '.json'
 
         with open(os.path.join(self.file_dir, result_file_name), 'w', encoding='utf-8') as result_file:
             json.dump(result_dict, result_file, indent=4, ensure_ascii=False)
-
 
 def get_image_list(image_folder_dir):
     image_list = [os.path.join(image_folder_dir, image_name) for image_name in os.listdir(image_folder_dir) if os.path.splitext(image_name)[-1] in ext_list]

@@ -105,9 +105,9 @@ hr { height: 1px; border-width: 0; }
    <widget class="QComboBox" name="ext_combo_box">
     <property name="geometry">
      <rect>
-      <x>420</x>
+      <x>550</x>
       <y>540</y>
-      <width>261</width>
+      <width>131</width>
       <height>31</height>
      </rect>
     </property>
@@ -131,7 +131,7 @@ hr { height: 1px; border-width: 0; }
     <property name="geometry">
      <rect>
       <x>420</x>
-      <y>360</y>
+      <y>420</y>
       <width>261</width>
       <height>32</height>
      </rect>
@@ -161,7 +161,7 @@ hr { height: 1px; border-width: 0; }
     <property name="geometry">
      <rect>
       <x>420</x>
-      <y>420</y>
+      <y>480</y>
       <width>261</width>
       <height>32</height>
      </rect>
@@ -176,20 +176,20 @@ hr { height: 1px; border-width: 0; }
     <property name="geometry">
      <rect>
       <x>430</x>
-      <y>340</y>
+      <y>400</y>
       <width>58</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>구도</string>
+     <string>모델 구도</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
       <x>430</x>
-      <y>400</y>
+      <y>460</y>
       <width>58</width>
       <height>16</height>
      </rect>
@@ -496,7 +496,7 @@ hr { height: 1px; border-width: 0; }
       </rect>
      </property>
      <property name="text">
-      <string>배경 2</string>
+      <string>2번</string>
      </property>
     </widget>
     <widget class="QRadioButton" name="bg_type_1">
@@ -509,7 +509,7 @@ hr { height: 1px; border-width: 0; }
       </rect>
      </property>
      <property name="text">
-      <string>배경 1</string>
+      <string>1번</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -525,7 +525,7 @@ hr { height: 1px; border-width: 0; }
       </rect>
      </property>
      <property name="text">
-      <string>배경 3</string>
+      <string>3번</string>
      </property>
     </widget>
     <widget class="QRadioButton" name="bg_type_4">
@@ -538,7 +538,7 @@ hr { height: 1px; border-width: 0; }
       </rect>
      </property>
      <property name="text">
-      <string>배경 4</string>
+      <string>4번</string>
      </property>
     </widget>
     <widget class="QRadioButton" name="bg_type_5">
@@ -551,7 +551,7 @@ hr { height: 1px; border-width: 0; }
       </rect>
      </property>
      <property name="text">
-      <string>배경 5</string>
+      <string>5번</string>
      </property>
     </widget>
     <widget class="QRadioButton" name="bg_type_7">
@@ -564,7 +564,7 @@ hr { height: 1px; border-width: 0; }
       </rect>
      </property>
      <property name="text">
-      <string>배경 7</string>
+      <string>7번</string>
      </property>
     </widget>
     <widget class="QRadioButton" name="bg_type_8">
@@ -577,7 +577,7 @@ hr { height: 1px; border-width: 0; }
       </rect>
      </property>
      <property name="text">
-      <string>배경 8</string>
+      <string>8번</string>
      </property>
     </widget>
     <widget class="QRadioButton" name="bg_type_6">
@@ -590,7 +590,7 @@ hr { height: 1px; border-width: 0; }
       </rect>
      </property>
      <property name="text">
-      <string>배경 6</string>
+      <string>6번</string>
      </property>
      <property name="checked">
       <bool>false</bool>
@@ -600,7 +600,7 @@ hr { height: 1px; border-width: 0; }
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>560</x>
       <y>520</y>
       <width>58</width>
       <height>16</height>
@@ -650,7 +650,7 @@ hr { height: 1px; border-width: 0; }
     <property name="geometry">
      <rect>
       <x>430</x>
-      <y>460</y>
+      <y>520</y>
       <width>58</width>
       <height>16</height>
      </rect>
@@ -663,8 +663,8 @@ hr { height: 1px; border-width: 0; }
     <property name="geometry">
      <rect>
       <x>420</x>
-      <y>480</y>
-      <width>261</width>
+      <y>540</y>
+      <width>131</width>
       <height>31</height>
      </rect>
     </property>
@@ -673,6 +673,61 @@ hr { height: 1px; border-width: 0; }
       <string>-</string>
      </property>
     </item>
+   </widget>
+   <widget class="QGroupBox" name="image_view_group_box">
+    <property name="geometry">
+     <rect>
+      <x>420</x>
+      <y>330</y>
+      <width>261</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>사진 구도</string>
+    </property>
+    <widget class="QRadioButton" name="side_radio_button">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>30</y>
+       <width>99</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>측면</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="back_radio_button">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>30</y>
+       <width>99</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>후면</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="front_radio_button">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>99</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>정면</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
