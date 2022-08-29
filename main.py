@@ -21,7 +21,7 @@ with open(os.path.join(DATA_DIR, 'colors_per_folder.json'), 'r') as colors_per_f
 with open(os.path.join(DATA_DIR, 'spao_color.json'), 'r') as spao_color_j:
     spao_colors = dict(json.load(spao_color_j))
 
-with open(os.path.join(DATA_DIR, 'class_dict.json'), 'r') as class_dict_j:
+with open(os.path.join(DATA_DIR, 'class_dict.json'), 'r', encoding="utf-8") as class_dict_j:
     class_dict = dict(json.load(class_dict_j))
 
 ext_list = ['.jpg', '.jpeg', '.png']
