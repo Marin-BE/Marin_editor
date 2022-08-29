@@ -24,6 +24,9 @@ with open(os.path.join(DATA_DIR, 'spao_color.json'), 'r') as spao_color_j:
 with open(os.path.join(DATA_DIR, 'class_dict.json'), 'r', encoding="utf-8") as class_dict_j:
     class_dict = dict(json.load(class_dict_j))
 
+with open(os.path.join(DATA_DIR, 'label_dict.json'), 'r', encoding="utf-8") as label_dict_j:
+    label_dict = dict(json.load(label_dict_j))
+
 ext_list = ['.jpg', '.jpeg', '.png']
 
 class MyWindow(QMainWindow, Ui_MainWindow):
@@ -48,7 +51,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         try:
             self.exist_folder_dir()
             self.widget_row_clicked()
-            self.cloth_type = 'b'
+            self.cloth_type = 'bottom'
             self.before_currentText = ''
             self.is_model = 'O'
             self.is_detail = '-'
@@ -81,9 +84,9 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.detail_combo_box.addItems(detail_list)
 
     def change_combo_box(self):
-        if self.b_radio_button.isChecked():   self.cloth_type = 'b'
-        elif self.p_radio_button.isChecked(): self.cloth_type = 'p'
-        elif self.t_radio_button.isChecked(): self.cloth_type = 't'
+        if self.b_radio_button.isChecked():   self.cloth_type = 'bottom'
+        elif self.p_radio_button.isChecked(): self.cloth_type = 'outer'
+        elif self.t_radio_button.isChecked(): self.cloth_type = 'top'
         
         composition_list = class_dict[self.cloth_type]['model_composition']
 
@@ -239,13 +242,16 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         result_dict['file_name'] = c_file_name
         
         result_dict['result'] = {}
-        result_dict['result']['cloth_type']        = self.cloth_type
-        result_dict['result']['model']             = self.model_list
-        result_dict['result']['bg_type']           = self.bg_type
-        result_dict['result']['image_composition'] = self.image_composition
-        result_dict['result']['model_composition'] = self.model_composition
-        result_dict['result']['detail']            = self.detail
-        result_dict['result']['color']             = self.color_code
+        result_dict['result']['cloth_type'] = label_dict['cloth_type'].index(self.cloth_type)
+        result_dict['result']['model'] = self.model_list
+        result_dict['result']['bg_type'] = self.bg_type
+        if self.image_composition != '-':
+            result_dict['result']['image_composition'] = label_dict['image_composition'].index(self.image_composition)
+        if self.model_composition != '-':
+            result_dict['result']['model_composition'] = label_dict['model_composition'].index(self.model_composition)
+        if self.model_composition == '디테일':
+            result_dict['result']['detail'] = label_dict['detail'][self.cloth_type][self.is_model].index(self.detail)
+        result_dict['result']['color'] = self.color_code
         
         result_file_name = os.path.splitext(c_file_name)[0] + '.json'
 
