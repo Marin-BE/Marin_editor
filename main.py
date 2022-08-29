@@ -3,12 +3,25 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox
 from PyQt5.QtGui import *
 from PyQt5 import uic
 
+import datetime
 import secrets
+import json
 import sys
 import os
 
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
+DATA_DIR = os.path.join(BASE_DIR, 'data')
+
 Ui_MainWindow = uic.loadUiType(os.path.join(BASE_DIR, "marin_editor.ui"))[0]
+
+with open(os.path.join(DATA_DIR, 'colors_per_folder.json'), 'r') as colors_per_folder_j:
+    colors_per_folder = dict(json.load(colors_per_folder_j))
+
+#spao_style_codes = list(colors_per_folder.keys())
+
+with open(os.path.join(DATA_DIR, 'spao_color.json'), 'r') as spao_color_j:
+    spao_colors = dict(json.load(spao_color_j))
 
 ext_list = ['.jpg', '.jpeg', '.png']
 
@@ -42,8 +55,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.b_radio_button.clicked.connect(self.change_combo_box)
         self.p_radio_button.clicked.connect(self.change_combo_box)
         self.t_radio_button.clicked.connect(self.change_combo_box)
-        self.is_model_O.clicked.connect(self.change_combo_box)
-        self.is_model_X.clicked.connect(self.change_combo_box)
+        self.check_box_no_model.stateChanged.connect(self.change_combo_box)
         self.composition_combo_box.activated[str].connect(self.check_detail)
 
         self.file_list_widget.clicked.connect(self.widget_row_clicked)
@@ -51,13 +63,14 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.change_file_name_button.clicked.connect(self.change_file_name_button_clicked)
         self.change_folder_dir_button.clicked.connect(self.exist_folder_dir)
 
+
         self.setUI()
 
     def setUI(self):
         try:
             self.exist_folder_dir()
             self.widget_row_clicked()
-            self.product = 'b'
+            self.cloth_type = 'b'
             self.before_currentText = ''
             self.is_model = 'O'
             self.is_detail = '-'
@@ -69,47 +82,42 @@ class MyWindow(QMainWindow, Ui_MainWindow):
 
     def check_detail(self, currentText):
         if currentText == self.before_currentText != '디테일':  pass
-        else:                                                  self.change_detail_combo_box()
+        else:                                                 self.change_detail_combo_box()
 
         self.before_currentText = currentText
+
+    def change_color_combo_box(self):
+        folder_name = os.path.split(self.folder_dir)[-1]
+        try:     color_list = colors_per_folder[folder_name]
+        except:  color_list = ['A', 'B', 'C', 'D', 'E']
+        self.colors_combo_box.clear()
+        self.colors_combo_box.addItems(color_list)
+
 
     def change_detail_combo_box(self):
         self.is_detail = self.composition_combo_box.currentText()
 
-        if self.is_detail == '디테일':  detail_list = class_dict[self.product]['detail'][self.is_model]
-        else:                           detail_list = ['-']
+        if self.is_detail == '디테일':  detail_list = class_dict[self.cloth_type]['detail'][self.is_model]
+        else:                         detail_list = ['-']
 
         self.detail_combo_box.clear()
         self.detail_combo_box.addItems(detail_list)
 
     def change_combo_box(self):
-        if self.b_radio_button.isChecked():   self.product = 'b'
-        elif self.p_radio_button.isChecked(): self.product = 'p'
-        elif self.t_radio_button.isChecked(): self.product = 't'
+        if self.b_radio_button.isChecked():   self.cloth_type = 'b'
+        elif self.p_radio_button.isChecked(): self.cloth_type = 'p'
+        elif self.t_radio_button.isChecked(): self.cloth_type = 't'
         
-        if self.is_model_O.isChecked(): 
-            self.is_model = 'O'
-            self.model_num_1.setCheckable(True)
-            self.model_num_2.setCheckable(True)
-            self.model_num_3.setCheckable(True)
-            self.model_num_1.setChecked(True)
-        else:                           
-            self.is_model = 'X'
-            self.model_num_1.setCheckable(False)
-            self.model_num_2.setCheckable(False)
-            self.model_num_3.setCheckable(False)
-
-            if self.model_num_1.isChecked(): self.model_num_1.setChecked(False)
-            elif self.model_num_2.isChecked(): self.model_num_2.setChecked(False)
-            elif self.model_num_3.isChecked(): self.model_num_3.setChecked(False)
-
+        if self.check_box_no_model.isChecked(): self.is_model = 'X'
+        else:                                   self.is_model = 'O'
+        
         self.is_detail = self.composition_combo_box.currentText()
 
         if self.is_detail == '디테일':
-            composition_list = class_dict[self.product]['composition'][self.is_model]
-            detail_list = class_dict[self.product]['detail'][self.is_model]
+            composition_list = class_dict[self.cloth_type]['composition'][self.is_model]
+            detail_list = class_dict[self.cloth_type]['detail'][self.is_model]
         else:
-            composition_list = class_dict[self.product]['composition'][self.is_model]
+            composition_list = class_dict[self.cloth_type]['composition'][self.is_model]
             detail_list = ['-']
 
         self.composition_combo_box.clear()
@@ -119,33 +127,38 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.detail_combo_box.addItems(detail_list)
 
     def checking_result(self):
-        result_name = ''
+        self.model_list = []
+        if self.check_box_m1.isChecked(): self.model_list.append('m1')
+        if self.check_box_m2.isChecked(): self.model_list.append('m2')
+        if self.check_box_m3.isChecked(): self.model_list.append('m3')
+        if self.check_box_m4.isChecked(): self.model_list.append('m4')
+        if self.check_box_m5.isChecked(): self.model_list.append('m5')
+        if self.check_box_m6.isChecked(): self.model_list.append('m6')
+        if self.check_box_m7.isChecked(): self.model_list.append('m7')
+        if self.check_box_f1.isChecked(): self.model_list.append('f1')
+        if self.check_box_f2.isChecked(): self.model_list.append('f2')
+        if self.check_box_f3.isChecked(): self.model_list.append('f3')
+        if self.check_box_f4.isChecked(): self.model_list.append('f4')
+        if self.check_box_f5.isChecked(): self.model_list.append('f5')
+        if self.check_box_f6.isChecked(): self.model_list.append('f6')
+        if self.check_box_no_model.isChecked(): self.model_list.clear()
 
-        if self.is_model_O.isChecked(): is_model = 'O'
-        else:                           is_model = 'X'
+        if self.bg_type_1.isChecked():   self.bg_type = '1'
+        elif self.bg_type_2.isChecked(): self.bg_type = '2'
+        elif self.bg_type_3.isChecked(): self.bg_type = '3'
+        elif self.bg_type_4.isChecked(): self.bg_type = '4'
+        elif self.bg_type_5.isChecked(): self.bg_type = '5'
+        elif self.bg_type_6.isChecked(): self.bg_type = '6'
+        elif self.bg_type_7.isChecked(): self.bg_type = '7'
+        elif self.bg_type_8.isChecked(): self.bg_type = '8'
+        else:                            self.bg_type = '-'
 
-        if self.bg_type_1.isChecked():   bg_type = '1'
-        elif self.bg_type_2.isChecked(): bg_type = '2'
-        elif self.bg_type_3.isChecked(): bg_type = '3'
-        else:                            bg_type = '-'
-
-        composition = self.composition_combo_box.currentText()
-        detail      = self.detail_combo_box.currentText()
-
-        if self.color_A.isChecked():   color = 'A'
-        elif self.color_B.isChecked(): color = 'B'
-        elif self.color_C.isChecked(): color = 'C'
-        else:                          color = '-'
-
-        if self.model_num_1.isChecked():   model_num = '1'
-        elif self.model_num_2.isChecked(): model_num = '2'
-        elif self.model_num_3.isChecked(): model_num = '3'
-        else:                              model_num = '-'
-
-        for result in [is_model, bg_type, composition, detail, color, model_num]:
-            if result != '-':  result_name += f'{result}_'
-
-        self.show_changed_file_name_text_edit.setPlainText(result_name[:-1])
+        self.composition = self.composition_combo_box.currentText()
+        self.detail      = self.detail_combo_box.currentText()
+        color            = self.colors_combo_box.currentText()
+        
+        try:    self.color_code = spao_colors['reverse'][color]
+        except: self.color_code = color
 
     def exist_folder_dir(self):
         self.item_idx = 0
@@ -154,6 +167,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
 
         self.image_path_list = get_image_list(self.folder_dir)
         self.changed_image_path_list = []
+        self.change_color_combo_box()
         self.show_list()
 
         self.file_list_widget.setCurrentRow(self.item_idx)
@@ -204,23 +218,46 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         try:
             self.checking_result()
             self.image_path_list.remove(self.file_path)
-
-            c_file_name = self.show_changed_file_name_text_edit.toPlainText()            
+     
             c_file_ext = self.ext_combo_box.currentText()
-            c_file_name = f'{c_file_name}_{secrets.token_hex(4)}{c_file_ext}'
-            
+            c_file_name = f'{secrets.token_hex(4)}{c_file_ext}'
+
             result, changed_file_name = change_file_name(self.file_path, c_file_name)
             self.changed_image_path_list.append(changed_file_name)
-            if result: self.show_changed_file_name_text_edit.setText(os.path.join(os.path.split(self.file_dir)[-1], c_file_name))
-            else:      self.Critical_event(changed_file_name)
+            if result: 
+                self.show_changed_file_name_text_edit.setText(os.path.join(self.file_dir, c_file_name))
+                self.make_json_result(c_file_name=c_file_name)
+            else:      
+                self.Critical_event(changed_file_name)
+            
+            self.show_changed_file_name_text_edit.setText(os.path.join(self.file_dir, c_file_name))
         except Exception as e:
             print(e)
             pass
 
-        #self.item_idx += 1
         self.show_list()
         self.file_list_widget.setCurrentRow(self.item_idx)
         self.widget_row_clicked()
+
+    def make_json_result(self, c_file_name):
+        result_dict = {}
+
+        result_dict['date'] = str(datetime.datetime.now())
+        result_dict['file_name'] = c_file_name
+        
+        result_dict['result'] = {}
+        result_dict['result']['cloth_type']  = self.cloth_type
+        result_dict['result']['model']       = self.model_list
+        result_dict['result']['bg_type']     = self.bg_type
+        result_dict['result']['composition'] = self.composition
+        result_dict['result']['detail']      = self.detail
+        result_dict['result']['color']       = self.color_code
+        
+        result_file_name = os.path.splitext(c_file_name)[0] + '.json'
+
+        with open(os.path.join(self.file_dir, result_file_name), 'w', encoding='utf-8') as result_file:
+            json.dump(result_dict, result_file, indent=4, ensure_ascii=False)
+
 
 def get_image_list(image_folder_dir):
     image_list = [os.path.join(image_folder_dir, image_name) for image_name in os.listdir(image_folder_dir) if os.path.splitext(image_name)[-1] in ext_list]
