@@ -18,31 +18,13 @@ Ui_MainWindow = uic.loadUiType(os.path.join(BASE_DIR, "marin_editor.ui"))[0]
 with open(os.path.join(DATA_DIR, 'colors_per_folder.json'), 'r') as colors_per_folder_j:
     colors_per_folder = dict(json.load(colors_per_folder_j))
 
-#spao_style_codes = list(colors_per_folder.keys())
-
 with open(os.path.join(DATA_DIR, 'spao_color.json'), 'r') as spao_color_j:
     spao_colors = dict(json.load(spao_color_j))
 
-ext_list = ['.jpg', '.jpeg', '.png']
+with open(os.path.join(DATA_DIR, 'class_dict.json'), 'r') as class_dict_j:
+    class_dict = dict(json.load(class_dict_j))
 
-# top, bottom, padding
-class_dict = {
-    't' : {
-        'model_composition' : ['상반신', '전신', '하반신', '디테일'], 
-        'detail'      : {'O' : ['넥라인', '중간허리부분', '소매', '포캣', '아래밑단', '후드뒷면'], 
-                         'X' : ['넥라인', '안감', '재질트위스트', '지퍼', '소매', '밑단']}
-    },
-    'p' : {
-        'model_composition' : ['상반신', '전신', '디테일'],
-        'detail'      : {'O' : ['집업', '집업오픈', '소매', '내부포켓', '외부포켓', '포켓손'], 
-                         'X' : ['넥라인', '소매', '포켓', '밑단', '안감']}
-    },
-    'b' : {
-        'model_composition' : ['전신', '하반신', '디테일'],
-        'detail'      : {'O' : ['허리가운데확대', '주머니손', '프린트', '뒷면포켓', '바지밑단'], 
-                         'X' : ['허리가운데확대', '허리옆부분', '프린트', '바지밑단', '뒷면포켓', '허리안쪽밴딩', '안감']}        
-    }
-}
+ext_list = ['.jpg', '.jpeg', '.png']
 
 class MyWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -59,7 +41,6 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.changed_file_list_widget.clicked.connect(self.float_about_message)
         self.change_file_name_button.clicked.connect(self.change_file_name_button_clicked)
         self.change_folder_dir_button.clicked.connect(self.exist_folder_dir)
-
 
         self.setUI()
 
@@ -158,7 +139,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.model_composition = self.composition_combo_box.currentText()
         if self.model_composition != '디테일':   
             self.model_composition = '-'
-            
+
         self.detail            = self.detail_combo_box.currentText()
         color                  = self.colors_combo_box.currentText()
         
