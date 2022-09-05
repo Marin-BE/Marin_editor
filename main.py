@@ -41,7 +41,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.composition_combo_box.activated[str].connect(self.check_detail)
 
         self.file_list_widget.clicked.connect(self.widget_row_clicked)
-        self.changed_file_list_widget.clicked.connect(self.float_about_message)
+        self.changed_file_list_widget.clicked.connect(self.changed_widget_row_clicked)
         self.change_file_name_button.clicked.connect(self.change_file_name_button_clicked)
         self.change_folder_dir_button.clicked.connect(self.exist_folder_dir)
 
@@ -189,47 +189,71 @@ class MyWindow(QMainWindow, Ui_MainWindow):
 
     def widget_row_clicked(self):
         try:
-            if len(self.image_path_list) > 0:
-                self.item_idx = self.file_list_widget.currentRow()
-                self.file_path = self.file_list_widget.item(self.item_idx).text()
-                self.file_dir = os.path.split(self.file_path)[0]
-                self.show_image_on_pixmap()
-            else:
-                self.exist_folder_dir()
+            #if len(self.image_path_list) > 0:
+            self.item_idx = self.file_list_widget.currentRow()
+            self.file_path = self.file_list_widget.item(self.item_idx).text()
+            self.show_image_on_pixmap()
+            self.show_changing_file_name_text_edit.setText(self.file_path)
+            #else:
+            #    self.exist_folder_dir()
         except Exception as e:
             print(e)
             
+    def changed_widget_row_clicked(self):
+        try:
+            #if len(self.image_path_list) > 0:
+            self.item_idx = self.changed_file_list_widget.currentRow()
+            self.file_path = self.changed_file_list_widget.item(self.item_idx).text()
+            self.show_image_on_pixmap()
+            self.show_changing_file_name_text_edit.setText(self.file_path)
+            #else:
+            #    self.exist_folder_dir()
+        except Exception as e:
+            print(e)
+
     def check_json_and_remove(self):
-        json_file = os.path.splitext(self.file_path)[0] + '.json'
+        try:
+            json_file = os.path.splitext(self.file_path)[0] + '.json'
 
-        if os.path.isfile(json_file):
-            os.remove(json_file)
-
+            if os.path.isfile(json_file):
+                os.remove(json_file)
+            
+            return True
+        except:
+            return False
     def Critical_event(self, massage) :
         QMessageBox.critical(self,'Error', massage)
 
     def change_file_name_button_clicked(self):
-        self.check_json_and_remove()
+        if self.check_json_and_remove():
+            print('file is removed')
+        else:
+            print('file is not removed')
 
         try:
             self.checking_result()
-            self.image_path_list.remove(self.file_path)
-     
+            print(self.image_path_list)
+            try:
+                self.image_path_list.remove(self.file_path)
+            except:
+                self.changed_image_path_list.remove(self.file_path)
+
             c_file_ext = self.ext_combo_box.currentText()
             c_file_name = f'{secrets.token_hex(4)}{c_file_ext}'
 
             result, changed_file_name = change_file_name(self.file_path, c_file_name)
             self.changed_image_path_list.append(changed_file_name)
             if result: 
-                self.show_changed_file_name_text_edit.setText(os.path.join(self.file_dir, c_file_name))
+                self.show_changed_file_name_text_edit.setText(os.path.join(self.folder_dir, c_file_name))
                 self.make_json_result(c_file_name=c_file_name)
             else:      
                 self.Critical_event(changed_file_name)
             
-            self.show_changed_file_name_text_edit.setText(os.path.join(self.file_dir, c_file_name))
+            self.show_changed_file_name_text_edit.setText(os.path.join(self.folder_dir, c_file_name))
         except Exception as e:
             print(e)
             pass
+            
 
         self.show_list()
         self.file_list_widget.setCurrentRow(self.item_idx)
@@ -255,7 +279,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         
         result_file_name = os.path.splitext(c_file_name)[0] + '.json'
 
-        with open(os.path.join(self.file_dir, result_file_name), 'w', encoding='utf-8') as result_file:
+        with open(os.path.join(self.folder_dir, result_file_name), 'w', encoding='utf-8') as result_file:
             json.dump(result_dict, result_file, indent=4, ensure_ascii=False)
 
 def get_image_list(image_folder_dir):
