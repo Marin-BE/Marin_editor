@@ -70,7 +70,7 @@ class MyWindow(QMainWindow, Ui_MainWindow):
     def change_color_combo_box(self):
         folder_name = os.path.split(self.folder_dir)[-1]
         try:     color_list = colors_per_folder[folder_name]
-        except:  color_list = ['A', 'B', 'C', 'D', 'E']
+        except:  color_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P']
         self.colors_combo_box.clear()
         self.colors_combo_box.addItems(color_list)
 
@@ -232,7 +232,8 @@ class MyWindow(QMainWindow, Ui_MainWindow):
 
         try:
             self.checking_result()
-            print(self.image_path_list)
+            #print(self.image_path_list)
+            o_file_name = os.path.split(self.file_path)[1]
             try:
                 self.image_path_list.remove(self.file_path)
             except:
@@ -245,13 +246,14 @@ class MyWindow(QMainWindow, Ui_MainWindow):
             self.changed_image_path_list.append(changed_file_name)
             if result: 
                 self.show_changed_file_name_text_edit.setText(os.path.join(self.folder_dir, c_file_name))
-                self.make_json_result(c_file_name=c_file_name)
+                self.make_json_result(o_file_name=o_file_name, c_file_name=c_file_name)
             else:      
                 self.Critical_event(changed_file_name)
             
             self.show_changed_file_name_text_edit.setText(os.path.join(self.folder_dir, c_file_name))
-        except Exception as e:
-            print(e)
+        except AttributeError as ae:
+            print(ae)
+            self.Critical_event("파일의 경로가 정상적으로 적용되지 않았습니다.")
             pass
             
 
@@ -259,11 +261,12 @@ class MyWindow(QMainWindow, Ui_MainWindow):
         self.file_list_widget.setCurrentRow(self.item_idx)
         self.widget_row_clicked()
 
-    def make_json_result(self, c_file_name):
+    def make_json_result(self, o_file_name, c_file_name):
         result_dict = {}
 
         result_dict['date'] = str(datetime.datetime.now())
         result_dict['file_name'] = c_file_name
+        result_dict['file_name_before'] = o_file_name
         
         result_dict['result'] = {}
         result_dict['result']['cloth_type'] = label_dict['cloth_type'].index(self.cloth_type)
